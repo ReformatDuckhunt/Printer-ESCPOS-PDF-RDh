@@ -107,9 +107,22 @@ sub text {
     my ($self, $string) = @_;
     my $text = $self->{page}->text();
     $text->font($self->{bold} ? $self->{font_bold} : $self->{font}, $self->{fontsize});
-    $text->translate($self->{x}, $self->{y});
+    my $text_width = length($string) * 9; # guessing the Text length
+
+    my $x = $self->{x};
+
+    if (defined $self->{justify}) {
+        if ($self->{justify} eq 'center') {  # Centered
+            $x = ($self->{width} - $text_width) / 2;
+        } elsif ($self->{justify} eq 'right') {  # right-aligned
+            $x = $self->{width} - $self->{margin} - $text_width;
+        } elsif ($self->{justify} eq 'left') {  # left-aligned
+            $x = $self->{margin};
+        }
+    }
+
+    $text->translate($x, $self->{y});
     $text->text($string);
-    $self->{x} += int(length($string) * 10);
 }
 
 sub lf {
